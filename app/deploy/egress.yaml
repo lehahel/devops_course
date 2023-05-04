@@ -1,0 +1,44 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: translation-api-egress-gateway
+spec:
+  selector:
+    istio: egressgateway
+  servers:
+    - port:
+      number: 80
+      name: "80"
+      protocol: HTTP
+  hosts:
+    - dictionary.yandex.net
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: translation-api-egress-service
+spec:
+  hosts:
+    - dictionary.yandex.net
+  gateways:
+    - translation-api-egress-gateway
+    - mesh
+  http:
+    - match:
+      - gateways:
+        - mesh
+      port: 80
+      route:
+        - destination:
+          host: translation-api-egress-gateway.istio-system.svc.cluster.local
+          port:
+            number: 80
+    - match:
+        - gateways:
+            - translation-api-egress-gateway
+          port: 80
+      route:
+        - destination:
+          host: dictionary.yandex.net
+          port:
+            number: 80

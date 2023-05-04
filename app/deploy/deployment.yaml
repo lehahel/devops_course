@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: translation-api-deployment
+  labels:
+    app: translation-api
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: translation-api
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: translation-api
+        version: v1
+    spec:
+      containers:
+        - name: translation-api
+          image: translation_api
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5000

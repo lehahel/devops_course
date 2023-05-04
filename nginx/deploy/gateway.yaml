@@ -1,0 +1,33 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: nginx-gateway
+spec:
+  selector:
+    istion: ingressgateway
+  servers:
+    - port:
+      number: 80
+      name: "80"
+      protocol: HTTP
+      hosts:
+        - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: nginx-gateway-service
+spec:
+  hosts:
+    - "*"
+  gateways:
+    - nginx-gateway-service
+  http:
+    - match:
+      - uri:
+        prefix: /api
+      route:
+        - destination:
+          host: translation-api
+          port:
+            number: 80
